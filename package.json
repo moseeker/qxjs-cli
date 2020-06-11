@@ -18,7 +18,7 @@
     "fix:prettier": "prettier \"src/**/*.ts\" --write",
     "fix:tslint": "tslint --fix --project .",
     "test": "run-s build test:*",
-    "test:lint-//": "tslint --project . && prettier \"src/**/*.ts\" --list-different",
+    "test-//:lint": "tslint --project . && prettier \"src/**/*.ts\" --list-different",
     "test:lint": "echo `ok`",
     "test:unit": "nyc --silent ava",
     "watch": "run-s clean build:main && run-p \"build:main -- -w\" \"test:unit -- --watch\"",
