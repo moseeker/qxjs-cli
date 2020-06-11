@@ -22,9 +22,7 @@ jobs:
       - run: npm run prepare-release
       - run: git push --follow-tags origin master
       - name: Publish if version has been updated
-        uses: pascalgn/npm-publish-action@4f4bf159e299f65d21cd1cbd96fc5d53228036df
-        with: # All of theses inputs are optional
-          tag_name: 'v%s'
+        run: npm publish --access public
         env: # More info about the environment variables in the README
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Leave this as is, it's automatically generated
           NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }} # You need to set this in your repo settings
