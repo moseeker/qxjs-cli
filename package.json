@@ -1,6 +1,6 @@
 {
   "name": "@moseeker/cli",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "MoSeeker frontend tool.",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
