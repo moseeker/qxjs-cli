@@ -8,6 +8,7 @@
   "repository": "https://github.com/towry/qxjs-cli",
   "license": "MIT",
   "keywords": [],
+  "bin": "./bin/qx.js",
   "scripts": {
     "describe": "npm-scripts-info",
     "build": "run-s clean && run-p build:*",
