@@ -1,5 +1,5 @@
 {
-  "name": "qxjs-cli",
+  "name": "@qxjs/cli",
   "version": "1.0.0",
   "description": "MoSeeker frontend tool.",
   "main": "build/main/index.js",
