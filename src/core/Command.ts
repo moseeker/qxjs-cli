@@ -1,77 +1,93 @@
-import log, { Logger } from 'npmlog'
-import { CommandOption, CommandArgv } from './utils'
-import Project from './Project'
+import log, { Logger } from 'npmlog';
+import { CommandOption, CommandArgv } from './utils';
+import Project from './Project';
 
-const cliPrefix = 'qxjs'
+const cliPrefix = 'qxjs';
 
-type OnResolved = (value: any) => any
-type OnRejected = (err: Error) => PromiseLike<Error>
+type OnResolved = (value: any) => any;
+type OnRejected = (err: Error) => PromiseLike<Error>;
 
-export default class Command {
-  options: CommandOption = {}
-  name: string
-  runner: Promise<any>
-  project?: Project
-  readonly argv: CommandArgv
+export default abstract class Command {
+  options: CommandOption = {};
+  name: string;
+  runner: Promise<any>;
+  project?: Project;
+  readonly argv: CommandArgv;
 
   constructor(cmdArgv: CommandArgv) {
-    const argv = (this.argv = Object.assign({}, cmdArgv))
-    this.name = this.constructor.name.replace(/Command$/, '').toLowerCase()
+    const argv = (this.argv = Object.assign({}, cmdArgv));
+    this.name = this.constructor.name.replace(/Command$/, '').toLowerCase();
 
-    log.pause()
-    log.heading = cliPrefix
-    log.silly(cliPrefix, 'argv', this.argv)
+    log.pause();
+    log.heading = cliPrefix;
+    log.silly(cliPrefix, 'argv', this.argv);
 
     this.runner = new Promise((resolve, reject) => {
-      let chain = Promise.resolve()
+      let chain = Promise.resolve();
       chain = chain.then(() => {
-        this.project = new Project(this.argv.cwd)
-      })
-      chain = chain.then(() => this.configureLogging())
+        this.project = new Project(this.argv.cwd);
+      });
+      chain = chain.then(() => this.configureLogging());
+      chain = chain.then(() => this.runCommand());
 
       chain.then(
         result => {
-          resolve(result)
+          log.warn('run command', 'success', result);
+          resolve(result);
         },
-        err => {
-          reject(err)
+        (err: Error & { name: string }) => {
+          reject(err);
         }
-      )
-    })
+      );
+    });
 
     if (argv.onResolved || argv.onRejected) {
-      this.runner = this.runner.then(argv.onResolved, argv.onRejected)
+      this.runner = this.runner.then(argv.onResolved, argv.onRejected);
 
-      delete argv.onResolved // eslint-disable-line no-param-reassign
-      delete argv.onRejected // eslint-disable-line no-param-reassign
+      delete argv.onResolved; // eslint-disable-line no-param-reassign
+      delete argv.onRejected; // eslint-disable-line no-param-reassign
     }
   }
 
   get logger(): Logger {
-    return log['newGroup'](this.name) as Logger
+    return log['newGroup'](this.name) as Logger;
   }
 
   then(onResolved: OnResolved, onRejected: OnRejected) {
-    return this.runner.then(onResolved, onRejected)
+    return this.runner.then(onResolved, onRejected);
   }
 
   catch(onRejected: OnRejected) {
-    return this.runner.catch(onRejected)
+    return this.runner.catch(onRejected);
   }
 
   configureLogging() {
-    const { loglevel } = this.options
+    const { loglevel } = this.options;
     if (loglevel) {
-      log.level = loglevel
+      log.level = loglevel;
     }
 
-    log.addLevel('success', 3001, { fg: 'green', bold: true })
-    log.resume()
+    log.addLevel('success', 3001, { fg: 'green', bold: true });
+    log.resume();
+
+    log.info('configure logging', 'success');
   }
 
   enableProgressBar() {
     if (this.options.progress !== false) {
-      log.enableProgress()
+      log.enableProgress();
     }
   }
+
+  async runCommand(): Promise<any> {
+    const success = this.initialize();
+    if (success !== false) {
+      return await this.execute();
+    }
+
+    return;
+  }
+
+  abstract initialize(): boolean | void;
+  abstract async execute(): Promise<any>;
 }

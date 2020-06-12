@@ -18,11 +18,11 @@
     "fix": "run-s fix:*",
     "fix:prettier": "prettier \"src/**/*.ts\" --write",
     "fix:tslint": "tslint --fix --project .",
-    "test": "run-s build test:*",
+    "test": "run-s build test-me:*",
     "test-//:lint": "tslint --project . && prettier \"src/**/*.ts\" --list-different",
     "test:lint": "echo \"ok\"",
-    "test-///:unit": "nyc --silent ava",
-    "watch": "run-s clean build:main && run-p \"build:main -- -w\" \"test:unit -- --watch\"",
+    "test-me:unit": "nyc --silent ava",
+    "watch": "run-s clean build:main && run-p \"build:main -- -w\"",
     "cov": "echo \"ok\"",
     "cov-//": "run-s build test:unit cov:html && open-cli coverage/index.html",
     "cov:html": "nyc report --reporter=html",
@@ -54,6 +54,7 @@
     "node": ">=8.9"
   },
   "dependencies": {
+    "cosmiconfig": "^6.0.0",
     "dedent": "^0.7.0",
     "npmlog": "^4.1.2",
     "sha.js": "^2.4.11",
@@ -65,6 +66,7 @@
     "@istanbuljs/nyc-config-typescript": "^0.1.3",
     "@types/dedent": "^0.7.0",
     "@types/jest": "^26.0.0",
+    "@types/lodash": "^4.14.155",
     "@types/npmlog": "^4.1.2",
     "@types/yargs": "^15.0.5",
     "ava": "^3.8.2",
@@ -87,10 +89,16 @@
   "ava": {
     "failFast": true,
     "files": [
-      "build/main/**/*.spec.js"
+      "tests/**/*.spec.ts"
     ],
-    "sources": [
-      "build/main/**/*.js"
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "ignoredByWatcher": [
+      "src/**/*.ts"
     ]
   },
   "config": {
