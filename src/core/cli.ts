@@ -1,4 +1,4 @@
-// import log from 'npmlog'
+import log from 'npmlog';
 import dedent from 'dedent';
 import yargs from 'yargs/yargs';
 
@@ -15,6 +15,8 @@ export default function cli(argv: any[], cwd: string) {
     .fail((msg: string, err: Error & { code?: number }) => {
       const actual = err || (new Error(msg) as Error & { code?: number });
       actual.code = actual.code || 1;
+
+      log.error('qxjs', actual.message);
       if (actual.code < 1) {
         actual.code = 1;
       }
@@ -22,7 +24,11 @@ export default function cli(argv: any[], cwd: string) {
     })
     .alias('h', 'help')
     .alias('v', 'version')
-    .wrap(cli.terminalWidth()).epilogue(dedent`
-    For more information, visit https://github.com/moseeker/qxjs-cli.
-  `);
+    .wrap(cli.terminalWidth())
+    .epilogue(
+      dedent`
+      For more information, visit https://github.com/moseeker/qxjs-cli.
+    `
+    )
+    .help();
 }

@@ -21,7 +21,6 @@ export default class Project {
    */
   constructor(cwd: string) {
     this.cwd = cwd;
-    log.verbose('cwd', cwd);
 
     const explore = cosmiconfigSync('qxjs', {
       searchPlaces: ['qxjs.config.js', 'qxjs.config.json', 'package.json'],
@@ -47,8 +46,6 @@ export default class Project {
       this.config_ = result.config;
       this.rootConfigLocation = result.filepath;
       this.rootPath = Path.dirname(result.filepath);
-
-      log.verbose('rootPath', this.rootPath);
     } catch (err) {
       if (err.name === 'JSONError') {
         throw new ValidationError(err.name, err.message);
@@ -64,7 +61,7 @@ export default class Project {
 
   set version(val: string) {
     if (!this.config_) {
-      log.verbose('set version', 'config not loaded');
+      log.warn('qxjs', 'set version', 'config not loaded');
       return;
     }
     this.config_.version = val;

@@ -1,3 +1,4 @@
+const log = require('npmlog');
 const lib = require('../');
 const pkg = require('../package.json');
 
@@ -9,9 +10,11 @@ function main(argv) {
     qxjsCliVersion: pkg.version
   };
 
+  log.silly('qxjs', 'cwd', process.cwd());
+
   return cli()
     .command(deployCmd)
     .parse(argv, context);
 }
 
-main(process.argv);
+main(process.argv.slice(2));

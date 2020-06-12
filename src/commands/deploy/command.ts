@@ -1,4 +1,5 @@
 import yargs from 'yargs';
+import runner from '.';
 
 export const command = 'deploy';
 
@@ -23,5 +24,5 @@ export const builder = (yargs: yargs.Argv) => {
 };
 
 export const handler = (argv: any[]) => {
-  return require('.')(argv);
+  return runner(argv);
 };

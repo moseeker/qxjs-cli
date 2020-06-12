@@ -12,9 +12,11 @@ export default abstract class Command {
   name: string;
   runner: Promise<any>;
   project?: Project;
+  envDefaults: { [key: string]: any } = {};
   readonly argv: CommandArgv;
 
   constructor(cmdArgv: CommandArgv) {
+    log.info('qxjs', 'argv', cmdArgv);
     const argv = (this.argv = Object.assign({}, cmdArgv));
     this.name = this.constructor.name.replace(/Command$/, '').toLowerCase();
 
@@ -27,12 +29,13 @@ export default abstract class Command {
       chain = chain.then(() => {
         this.project = new Project(this.argv.cwd);
       });
+      chain = chain.then(() => this.confiigureEnvironment());
+      chain = chain.then(() => this.configureOptions());
       chain = chain.then(() => this.configureLogging());
       chain = chain.then(() => this.runCommand());
 
       chain.then(
         result => {
-          log.warn('run command', 'success', result);
           resolve(result);
         },
         (err: Error & { name: string }) => {
@@ -69,8 +72,41 @@ export default abstract class Command {
 
     log.addLevel('success', 3001, { fg: 'green', bold: true });
     log.resume();
+  }
 
-    log.info('configure logging', 'success');
+  configureOptions() {
+    const commandConfig = this.project.get(['config', this.name]);
+    const overrides = commandConfig;
+
+    this.options = Object.assign(
+      {},
+      this.argv,
+      overrides,
+      this.project.config,
+      this.envDefaults
+    );
+  }
+
+  async confiigureEnvironment() {
+    const ci = await import('is-ci');
+    let loglevel;
+    let progress;
+
+    if (ci || !process.stderr.isTTY) {
+      log.disableColor();
+      progress = false;
+    } else if (!process.stdout.isTTY) {
+      progress = false;
+      loglevel = 'error';
+    } else if (process.stderr.isTTY) {
+      log.enableColor();
+      log.enableUnicode();
+    }
+
+    this.envDefaults = {
+      loglevel,
+      progress
+    };
   }
 
   enableProgressBar() {
