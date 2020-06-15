@@ -10,6 +10,11 @@ export default function cli(argv: any[], cwd: string) {
       1,
       'A command is required. Pass --help to see all available commands and options.'
     )
+    .option('V', {
+      type: 'boolean',
+      describe: 'Verbose mode, show more logs',
+      alias: 'verbose'
+    })
     .recommendCommands()
     .strict()
     .fail((msg: string, err: Error & { code?: number }) => {

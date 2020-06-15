@@ -1,14 +1,14 @@
 import yargs from 'yargs';
 import runner from '.';
 
-export const command = 'deploy';
+export const command = 'deploy [<project-path>]';
 
 export const describe = 'Deploy a project';
 
 export const builder = (yargs: yargs.Argv) => {
   yargs
-    .positional('demo-positional', {
-      describe: 'This is a demo arg, do nothing',
+    .positional('project-path', {
+      describe: 'The project root that contains a config file',
       type: 'string'
     })
     .options({

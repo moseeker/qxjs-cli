@@ -26,9 +26,9 @@ export default class Project {
       searchPlaces: ['qxjs.config.js', 'qxjs.config.json', 'package.json'],
       transform(obj) {
         if (!obj) {
-          log.error(
+          log.verbose(
             'qxjs',
-            `couldn't find config in cwd: ${Path.resolve(cwd || '.')}`
+            `couldn't find config in: ${Path.resolve(cwd || '.')}`
           );
 
           return {
@@ -46,6 +46,10 @@ export default class Project {
       this.config_ = result.config;
       this.rootConfigLocation = result.filepath;
       this.rootPath = Path.dirname(result.filepath);
+      // accet root path config.
+      if (this.config_.root) {
+        this.rootPath = Path.resolve(this.config_.root, this.rootPath);
+      }
     } catch (err) {
       if (err.name === 'JSONError') {
         throw new ValidationError(err.name, err.message);

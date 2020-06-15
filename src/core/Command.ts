@@ -16,7 +16,6 @@ export default abstract class Command {
   readonly argv: CommandArgv;
 
   constructor(cmdArgv: CommandArgv) {
-    log.info('qxjs', 'argv', cmdArgv);
     const argv = (this.argv = Object.assign({}, cmdArgv));
     this.name = this.constructor.name.replace(/Command$/, '').toLowerCase();
 
@@ -32,6 +31,9 @@ export default abstract class Command {
       chain = chain.then(() => this.confiigureEnvironment());
       chain = chain.then(() => this.configureOptions());
       chain = chain.then(() => this.configureLogging());
+      chain = chain.then(() => {
+        this.logger.verbose(this.name, 'options', this.options);
+      });
       chain = chain.then(() => this.runCommand());
 
       chain.then(
@@ -78,13 +80,19 @@ export default abstract class Command {
     const commandConfig = this.project.get(['config', this.name]);
     const overrides = commandConfig;
 
+    const { verbose } = this.argv;
+    const loglevel = verbose ? 'verbose' : null;
+
     this.options = Object.assign(
-      {},
       this.argv,
       overrides,
       this.project.config,
       this.envDefaults
     );
+
+    if (loglevel && !this.options.loglevel) {
+      this.options.loglevel = loglevel;
+    }
   }
 
   async confiigureEnvironment() {

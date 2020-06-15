@@ -1,14 +1,18 @@
 import assert from 'assert';
 import Command from '../../core/Command';
+import CopySubCmd from '../subs/copy';
 
 /**
  * Deploy qxjs project.
  */
 export class DeployCommand extends Command {
   configSectionName = 'deploy';
+  copy: CopySubCmd;
 
   initialize() {
     this.logger.success('abc');
+
+    this.copy = new CopySubCmd(this);
   }
 
   validateConfig() {
@@ -18,6 +22,9 @@ export class DeployCommand extends Command {
 
   async execute(): Promise<void> {
     this.validateConfig();
+
+    // copy files.
+    await this.copy.execute();
   }
 }
 
