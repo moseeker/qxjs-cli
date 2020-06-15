@@ -1,4 +1,4 @@
-# qxjs-cli
+# @moseeker/cli
 
 MoSeeker Frontend tool.
 
