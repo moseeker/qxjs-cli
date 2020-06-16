@@ -1,4 +1,6 @@
 import cli from './core/cli';
-import Command from './core/Command';
 
-export { cli, Command };
+// commands
+import * as deployCmd from './commands/deploy/command';
+
+export { cli, deployCmd };

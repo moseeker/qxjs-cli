@@ -1,13 +1,15 @@
-# qxjs-cli
+# @moseeker/cli
 
 MoSeeker Frontend tool.
 
 ## Install
 
 ```
-npm install @qxjs/cli
+npm install @moseeker/cli
 ```
 
 # Commands
+
+run `qx --help` for full list of commands.
 
 - deploy: Deploy qxjs library.
