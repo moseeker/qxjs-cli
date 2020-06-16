@@ -32,6 +32,7 @@ export default abstract class Command {
       chain = chain.then(() => this.configureOptions());
       chain = chain.then(() => this.configureLogging());
       chain = chain.then(() => {
+        this.logger.info(this.name, 'version', this.options.qxjsCliVersion);
         this.logger.verbose(this.name, 'options', this.options);
       });
       chain = chain.then(() => this.runCommand());
@@ -96,7 +97,7 @@ export default abstract class Command {
   }
 
   async confiigureEnvironment() {
-    const ci = await import('is-ci');
+    const { default: ci } = await import('is-ci');
     let loglevel;
     let progress;
 

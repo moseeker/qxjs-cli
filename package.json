@@ -9,7 +9,9 @@
   "license": "MIT",
   "keywords": [],
   "private": false,
-  "bin": "./bin/qx.js",
+  "bin": {
+    "qx": "./bin/qx.js"
+  },
   "scripts": {
     "describe": "npm-scripts-info",
     "build": "run-s clean && run-p build:*",

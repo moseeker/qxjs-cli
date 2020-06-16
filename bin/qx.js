@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const log = require('npmlog');
 const lib = require('../');
 const pkg = require('../package.json');
