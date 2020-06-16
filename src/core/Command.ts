@@ -1,3 +1,4 @@
+import Path from 'path';
 import log, { Logger } from 'npmlog';
 import { CommandOption, CommandArgv } from './utils';
 import Project from './Project';
@@ -21,12 +22,14 @@ export default abstract class Command {
 
     log.pause();
     log.heading = cliPrefix;
-    log.silly(cliPrefix, 'argv', this.argv);
 
     this.runner = new Promise((resolve, reject) => {
       let chain = Promise.resolve();
       chain = chain.then(() => {
-        this.project = new Project(this.argv.cwd);
+        const cwd = this.argv.projectPath
+          ? Path.resolve(process.cwd(), this.argv.projectPath)
+          : process.cwd();
+        this.project = new Project(cwd);
       });
       chain = chain.then(() => this.confiigureEnvironment());
       chain = chain.then(() => this.configureOptions());
@@ -59,11 +62,11 @@ export default abstract class Command {
     return log['newGroup'](this.name) as Logger;
   }
 
-  then(onResolved: OnResolved, onRejected: OnRejected) {
+  async then(onResolved: OnResolved, onRejected: OnRejected) {
     return this.runner.then(onResolved, onRejected);
   }
 
-  catch(onRejected: OnRejected) {
+  async catch(onRejected: OnRejected) {
     return this.runner.catch(onRejected);
   }
 
@@ -86,8 +89,8 @@ export default abstract class Command {
 
     this.options = Object.assign(
       this.argv,
-      overrides,
       this.project.config,
+      overrides,
       this.envDefaults
     );
 
@@ -99,7 +102,7 @@ export default abstract class Command {
   async confiigureEnvironment() {
     const { default: ci } = await import('is-ci');
     let loglevel;
-    let progress;
+    let progress = true;
 
     if (ci || !process.stderr.isTTY) {
       log.disableColor();
@@ -135,4 +138,17 @@ export default abstract class Command {
 
   abstract initialize(): boolean | void;
   abstract async execute(): Promise<any>;
+
+  /**
+   * Resolve the path related to the cwd.
+   */
+  resolvePath(path: string): string {
+    if (typeof path !== 'string') {
+      throw new Error(
+        'The `path` argument must be of type string. Received ' + typeof path
+      );
+    }
+    const rootPath = this.project.rootPath;
+    return Path.resolve(rootPath, path);
+  }
 }

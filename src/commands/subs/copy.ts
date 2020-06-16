@@ -1,5 +1,8 @@
+import isArray from 'lodash/isArray';
+import isString from 'lodash/isString';
 import assert from 'assert';
 import cpx from 'cpx';
+import each from 'lodash/each';
 
 import { SubCommand } from '../../core/SubCommand';
 import ValidationError from '../../core/ValidationError';
@@ -39,9 +42,26 @@ export default class CopySubCmd extends SubCommand {
     await this.validate();
 
     const { source, dest } = this.config;
+    const copyConfig = {
+      ...this.config,
+      includeEmptyDirs: true
+    };
 
-    this.cmd.logger.info(this.name, 'coping files to: ' + dest);
-    await this.copy(source, dest, this.config);
+    let sourcePaths = [];
+
+    if (!isArray(source)) {
+      sourcePaths = [source];
+    } else {
+      sourcePaths = source;
+    }
+
+    const destDir = this.cmd.resolvePath(dest);
+
+    each(sourcePaths, async s => {
+      const sourceDir = this.cmd.resolvePath(s);
+      this.cmd.logger.info(this.name, 'copying files: ', s, '=>', dest);
+      await this.copy(sourceDir, destDir, copyConfig);
+    });
 
     return;
   }
@@ -50,10 +70,15 @@ export default class CopySubCmd extends SubCommand {
     this.inited_ = true;
   }
 
-  async validate(): Promise<boolean> {
-    assert.equal('string', typeof this.config.source);
+  async validate(): Promise<any> {
+    const source = this.config.source;
+
     assert.equal('string', typeof this.config.dest);
-    return true;
+    if (!isString(source) && !isArray(source)) {
+      throw new Error(
+        'source must be of type string|array, received ' + typeof source
+      );
+    }
   }
 
   async copy(

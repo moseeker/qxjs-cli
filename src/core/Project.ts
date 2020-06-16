@@ -32,7 +32,9 @@ export default class Project {
           );
 
           return {
-            config: {},
+            config: {
+              __empty__: true
+            },
             filepath: Path.resolve(cwd || '.', 'qxjs.config.js')
           };
         }
@@ -47,9 +49,10 @@ export default class Project {
       this.rootConfigLocation = result.filepath;
       this.rootPath = Path.dirname(result.filepath);
       // accet root path config.
-      if (this.config_.root) {
+      if (typeof this.config_.root === 'string') {
         this.rootPath = Path.resolve(this.config_.root, this.rootPath);
       }
+      this.config_.rootPath = this.rootPath;
     } catch (err) {
       if (err.name === 'JSONError') {
         throw new ValidationError(err.name, err.message);
@@ -57,6 +60,10 @@ export default class Project {
 
       throw err;
     }
+  }
+
+  get empty() {
+    return !!this.config_.__empty__;
   }
 
   get version() {

@@ -21,7 +21,10 @@ export default function cli(argv: any[], cwd: string) {
       const actual = err || (new Error(msg) as Error & { code?: number });
       actual.code = actual.code || 1;
 
-      log.error('qxjs', actual.message);
+      if (actual.name !== 'ValidationError') {
+        log.error('qxjs', actual.message);
+      }
+
       if (actual.code < 1) {
         actual.code = 1;
       }
