@@ -14,4 +14,4 @@ npm install -g @moseeker/cli
 
 run `qx --help` for full list of commands.
 
-- deploy: Deploy qxjs library.
+- deploy: 根据配置文件，构建 qxjs 项目，然后将构建后的内容拷贝到一个 git 仓库，自动 打 tag 并 push git 仓库。
