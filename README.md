@@ -1,11 +1,13 @@
 # @moseeker/cli
 
+[![npm version](https://badge.fury.io/js/%40moseeker%2Fcli.svg)](https://badge.fury.io/js/%40moseeker%2Fcli)
+
 MoSeeker Frontend tool.
 
 ## Install
 
 ```
-npm install @moseeker/cli
+npm install -g @moseeker/cli
 ```
 
 # Commands
