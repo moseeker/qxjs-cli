@@ -23,6 +23,5 @@ test('get config', t => {
 });
 
 test('has version', t => {
-  t.log(project.config);
   t.true(project.has('config.version'));
 });

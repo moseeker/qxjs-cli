@@ -23,7 +23,7 @@
     "test": "run-s build test-me:*",
     "test-//:lint": "tslint --project . && prettier \"src/**/*.ts\" --list-different",
     "test:lint": "echo \"ok\"",
-    "test-me:unit": "nyc --silent ava",
+    "test-me:unit": "nyc ava --verbose",
     "watch": "run-s clean build:main && run-p \"build:main -- -w\"",
     "cov": "echo \"ok\"",
     "cov-//": "run-s build test:unit cov:html && open-cli coverage/index.html",
@@ -94,8 +94,9 @@
   },
   "ava": {
     "failFast": true,
+    "verbose": true,
     "files": [
-      "tests/**/*.spec.ts"
+      "**/tests/**/*.spec.ts"
     ],
     "extensions": [
       "ts"
