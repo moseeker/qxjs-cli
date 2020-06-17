@@ -10,7 +10,6 @@ import execa from 'execa';
 import standardVersion from 'standard-version';
 import { SubCommand } from '../../core/SubCommand';
 import ValidationError from '../../core/ValidationError';
-import { option } from 'yargs';
 import { getLatestCommit, isRepoClean } from '../../core/gitutil';
 
 export interface ReleaseSubCmdConfig {

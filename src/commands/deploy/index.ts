@@ -1,5 +1,5 @@
 import runAll from 'npm-run-all';
-import execa from 'execa';
+import fs from 'fs';
 import standardVersion from 'standard-version';
 import Command from '../../core/Command';
 import CopySubCmd, { CopyConfig } from '../subs/copy';
@@ -38,7 +38,7 @@ export class DeployCommand extends Command {
     this.release.initialize({ cwd: this.config.dest });
   }
 
-  validateConfig() {
+  async validateConfig() {
     if (this.project.empty) {
       throw new ValidationError(
         this.name,
@@ -56,13 +56,23 @@ export class DeployCommand extends Command {
         `{config}.build must be of type string, received ${typeof config.build}`
       );
     }
+
+    const dest = this.resolvePath(this.config.dest);
+    try {
+      const stats = fs.statSync(dest);
+      if (!stats.isDirectory()) {
+        throw new ValidationError(this.name, `${dest} is not a directory`);
+      }
+    } catch (err) {
+      throw new ValidationError(this.name, `ENOENT: ${dest} doesn't exist`);
+    }
   }
 
   async execute(): Promise<void> {
     const oldCwd = this.release.enter(this.options.rootPath);
 
     this.enableProgressBar();
-    this.validateConfig();
+    await this.validateConfig();
 
     const currentWorkingDir = process.cwd();
 
