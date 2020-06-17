@@ -70,11 +70,13 @@ export default class ReleaseSubCmd extends SubCommand {
     await this.validate();
 
     // commit stuff.
+    const oldCwd = this.enter(this.config.cwd);
     this.cmd.logger.info(this.name, 'git commit', process.cwd());
     await execa('git', ['add', '.']);
     await execa('git', ['commit', '-m', this.getCommitInfo_()]);
     await this.standardVersion();
     await execa('git', ['push', '--follow-tags', 'origin master']);
+    this.leave(oldCwd);
 
     this.cmd.logger.success(this.name, 'release done');
   }

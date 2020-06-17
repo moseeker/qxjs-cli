@@ -97,7 +97,7 @@ export class DeployCommand extends Command {
       throw new ValidationError(this.name, err.message, err);
     }
 
-    this.logger.info(this.name, 'working dir is clean');
+    this.logger.info(this.name, `working dir [${process.cwd()}] is clean`);
   }
 
   /**
