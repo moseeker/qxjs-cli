@@ -52,12 +52,12 @@ export default class ReleaseSubCmd extends SubCommand {
     await execa('git', ['clean', '-dfx']);
     await execa('git', ['reset', '--hard']);
     await execa('git', ['checkout', 'origin/master']);
-    await execa('git', ['pull']);
+    await execa('git', ['pull', 'origin', 'master']);
 
     // clean up.
     this.leave(oldCwd);
     this.cmd.logger.info(this.name, 'cwd', process.cwd());
-    this.cmd.logger.success(this.name, 'done');
+    this.cmd.logger.success(this.name, 'cleanup done');
   }
 
   async execute() {
@@ -88,6 +88,6 @@ export default class ReleaseSubCmd extends SubCommand {
   }
 
   getCommitInfo_() {
-    return `feat: ${new Date().toString()}`;
+    return ['"', `feat: ${new Date().toString()}`, '"'].join('');
   }
 }
