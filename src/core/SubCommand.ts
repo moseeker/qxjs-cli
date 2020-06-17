@@ -24,6 +24,6 @@ export abstract class SubCommand implements ISubCommand {
     return this.inited_;
   }
 
-  abstract initialize(): Promise<any>;
+  abstract initialize(...args: any[]): Promise<any>;
   abstract execute(): Promise<any>;
 }
