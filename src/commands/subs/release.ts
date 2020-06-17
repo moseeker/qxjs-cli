@@ -61,6 +61,8 @@ export default class ReleaseSubCmd extends SubCommand {
   }
 
   async execute() {
+    this.cmd.logger.info(this.name, 'begin release');
+
     if (!this.inited) {
       throw new ValidationError(this.name, 'not initialized');
     }
@@ -73,6 +75,8 @@ export default class ReleaseSubCmd extends SubCommand {
     await execa('git', ['commit', '-m', this.getCommitInfo_()]);
     await this.standardVersion();
     await execa('git', ['push', '--follow-tags', 'origin master']);
+
+    this.cmd.logger.success(this.name, 'release done');
   }
 
   async standardVersion(): Promise<void> {

@@ -69,7 +69,7 @@ export class DeployCommand extends Command {
     await this.runBuild();
 
     // clean up dest.
-    this.release.cleanup(this.config.dest);
+    await this.release.cleanup(this.config.dest);
     // copy files.
     await this.copy.execute();
     // release.
@@ -79,6 +79,8 @@ export class DeployCommand extends Command {
   }
 
   async runBuild(): Promise<void> {
+    this.logger.info(this.name, 'running build script');
+
     const buildScriptName = this.config.build;
 
     return runAll([buildScriptName], {});
@@ -94,6 +96,8 @@ export class DeployCommand extends Command {
     } catch (err) {
       throw new ValidationError(this.name, err.message, err);
     }
+
+    this.logger.info(this.name, 'working dir is clean');
   }
 
   /**
