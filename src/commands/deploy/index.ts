@@ -81,7 +81,7 @@ export class DeployCommand extends Command {
     if (!repoIsClean) {
       throw new ValidationError(
         this.name,
-        '🧹 please make sure this repo is pushed.'
+        `⛈  please make sure repo [${currentWorkingDir}] is up-to-date & clean.`
       );
     } else {
       this.logger.info(this.name, `working dir [${process.cwd()}] is clean`);
@@ -114,7 +114,17 @@ export class DeployCommand extends Command {
 
     const buildScriptName = this.config.build;
 
-    return runAll([buildScriptName], {});
+    this.logger.pause();
+
+    await runAll([buildScriptName], {
+      stdout: process.stdout,
+      stderr: process.stderr,
+      stdin: process.stdin,
+      printName: true,
+      printLabel: true
+    });
+
+    this.logger.resume();
   }
 
   /**
