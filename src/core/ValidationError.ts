@@ -2,6 +2,7 @@
  * @see `@lerna/validation-error`.
  */
 import log from 'npmlog';
+import { reset } from 'yargs';
 
 export default class ValidationError extends Error {
   prefix: string = '';

@@ -1,6 +1,7 @@
 import log from 'npmlog';
 import dedent from 'dedent';
 import yargs from 'yargs/yargs';
+import ValidationError from './ValidationError';
 
 export default function cli(argv: any[], cwd: string) {
   const cli = yargs(argv, cwd);

@@ -2,7 +2,7 @@ import isArray from 'lodash/isArray';
 import isString from 'lodash/isString';
 import assert from 'assert';
 import cpx from 'cpx';
-import each from 'lodash/each';
+import map from 'lodash/map';
 
 import { SubCommand } from '../../core/SubCommand';
 import ValidationError from '../../core/ValidationError';
@@ -57,11 +57,19 @@ export default class CopySubCmd extends SubCommand {
 
     const destDir = this.cmd.resolvePath(dest);
 
-    each(sourcePaths, async s => {
-      const sourceDir = this.cmd.resolvePath(s);
-      this.cmd.logger.info(this.name, 'copying files: ', s, '=>', dest);
-      await this.copy(sourceDir, destDir, copyConfig);
-    });
+    await Promise.all(
+      map(sourcePaths, async s => {
+        const sourceDir = this.cmd.resolvePath(s);
+        this.cmd.logger.info(
+          this.name,
+          'copying files: ',
+          sourceDir,
+          '=>',
+          dest
+        );
+        await this.copy(sourceDir, destDir, copyConfig);
+      })
+    );
 
     return;
   }

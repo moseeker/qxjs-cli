@@ -10,9 +10,18 @@ import execa from 'execa';
 import standardVersion from 'standard-version';
 import { SubCommand } from '../../core/SubCommand';
 import ValidationError from '../../core/ValidationError';
+import { option } from 'yargs';
+import { getLatestCommit, isRepoClean } from '../../core/gitutil';
 
 export interface ReleaseSubCmdConfig {
   cwd?: string;
+}
+
+interface ExecuateContext {
+  /**
+   * The source project latest commit.
+   */
+  sourceCommit?: string;
 }
 
 export default class ReleaseSubCmd extends SubCommand {
@@ -47,20 +56,24 @@ export default class ReleaseSubCmd extends SubCommand {
   }
 
   async cleanup(cwdDir: string) {
+    this.cmd.logger.info(this.name, 'cleanup', cwdDir);
     const oldCwd = this.enter(cwdDir);
     // clean up the working dir.
     await execa('git', ['clean', '-dfx']);
     await execa('git', ['reset', '--hard']);
-    await execa('git', ['checkout', 'origin/master']);
+    await execa('git', ['checkout', 'master']);
     await execa('git', ['pull', 'origin', 'master']);
+
+    this.cmd.logger.success(this.name, 'cleanup done');
 
     // clean up.
     this.leave(oldCwd);
     this.cmd.logger.info(this.name, 'cwd', process.cwd());
-    this.cmd.logger.success(this.name, 'cleanup done');
   }
 
-  async execute() {
+  async execute(ctx: ExecuateContext): Promise<string> {
+    ctx = ctx || {};
+
     this.cmd.logger.info(this.name, 'begin release');
 
     if (!this.inited) {
@@ -72,13 +85,59 @@ export default class ReleaseSubCmd extends SubCommand {
     // commit stuff.
     const oldCwd = this.enter(this.config.cwd);
     this.cmd.logger.info(this.name, 'git commit', process.cwd());
-    await execa('git', ['add', '.']);
-    await execa('git', ['commit', '-m', this.getCommitInfo_()]);
-    await this.standardVersion();
-    await execa('git', ['push', '--follow-tags', 'origin master']);
+    const cwd = process.cwd();
+    const isClean = await isRepoClean(cwd);
+
+    let execResult;
+
+    if (!isClean) {
+      execResult = await execa('git', ['add', '.']);
+      this.logExecResult(execResult);
+
+      execResult = await execa(
+        'git',
+        ['commit', '-m', this.getCommitInfo_(ctx.sourceCommit)],
+        {
+          stdout: process.stdout,
+          stderr: process.stderr,
+          buffer: false
+        }
+      );
+      this.logExecResult(execResult);
+
+      await this.standardVersion();
+    } else {
+      this.cmd.logger.warn(
+        this.name,
+        'repo is already clean, going to push it'
+      );
+    }
+
+    execResult = await execa(
+      'git',
+      ['push', '--follow-tags', 'origin', 'master'],
+      {
+        buffer: true
+      }
+    );
+
+    this.logExecResult(execResult);
+
+    const commit = await getLatestCommit(process.cwd());
+
     this.leave(oldCwd);
 
-    this.cmd.logger.success(this.name, 'release done');
+    this.cmd.logger.success(this.name, '🏁 release done');
+
+    return commit;
+  }
+
+  logExecResult(r: { stderr?: string; stdout?: string }) {
+    if (r.stdout) {
+      this.cmd.logger.success(this.name, r.stdout);
+    } else if (r.stderr) {
+      this.cmd.logger.info(this.name, r.stderr);
+    }
   }
 
   async standardVersion(): Promise<void> {
@@ -89,7 +148,7 @@ export default class ReleaseSubCmd extends SubCommand {
     });
   }
 
-  getCommitInfo_() {
-    return ['"', `feat: ${new Date().toString()}`, '"'].join('');
+  getCommitInfo_(msg: string) {
+    return `'feat: ${msg || new Date().toString()}'`;
   }
 }

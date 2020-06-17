@@ -1,10 +1,11 @@
 import runAll from 'npm-run-all';
+import execa from 'execa';
 import standardVersion from 'standard-version';
 import Command from '../../core/Command';
 import CopySubCmd, { CopyConfig } from '../subs/copy';
 import ReleaseSubCmd from '../subs/release';
 import ValidationError from '../../core/ValidationError';
-import execa from 'execa';
+import { getLatestCommit, isRepoClean } from '../../core/gitutil';
 
 export interface DeployCommandConfig extends CopyConfig {
   /**
@@ -58,24 +59,44 @@ export class DeployCommand extends Command {
   }
 
   async execute(): Promise<void> {
-    this.logger.info(this.name, 'cwd:', this.options.rootPath);
+    const oldCwd = this.release.enter(this.options.rootPath);
 
     this.enableProgressBar();
     this.validateConfig();
 
+    const currentWorkingDir = process.cwd();
+
     // check
-    await this.checkWorkdirClean();
+    const repoIsClean = await isRepoClean(currentWorkingDir);
+    if (!repoIsClean) {
+      throw new ValidationError(
+        this.name,
+        '🧹 please make sure this repo is pushed.'
+      );
+    } else {
+      this.logger.info(this.name, `working dir [${process.cwd()}] is clean`);
+    }
     // run build command.
     await this.runBuild();
+
+    const latestCommit = await getLatestCommit(currentWorkingDir);
 
     // clean up dest.
     await this.release.cleanup(this.config.dest);
     // copy files.
     await this.copy.execute();
     // release.
-    await this.release.execute();
+    const releasedCommit = await this.release.execute({
+      sourceCommit: latestCommit
+    });
 
-    this.logger.success(this.name, '🥳 success');
+    this.release.leave(oldCwd);
+
+    this.logger.success(
+      this.name,
+      '🥳 success, the commit version: \n',
+      releasedCommit
+    );
   }
 
   async runBuild(): Promise<void> {
@@ -84,20 +105,6 @@ export class DeployCommand extends Command {
     const buildScriptName = this.config.build;
 
     return runAll([buildScriptName], {});
-  }
-
-  async checkWorkdirClean() {
-    try {
-      const result = await execa.sync('git', ['status']);
-      const out = result.stdout;
-      if (out.indexOf('working tree clean') === -1) {
-        throw new ValidationError(this.name, 'please push this project first');
-      }
-    } catch (err) {
-      throw new ValidationError(this.name, err.message, err);
-    }
-
-    this.logger.info(this.name, `working dir [${process.cwd()}] is clean`);
   }
 
   /**

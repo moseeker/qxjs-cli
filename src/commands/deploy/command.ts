@@ -23,6 +23,6 @@ export const builder = (yargs: yargs.Argv) => {
   return yargs;
 };
 
-export const handler = (argv: any[]) => {
-  return runner(argv);
+export const handler = async (argv: any[]) => {
+  await runner(argv).runner;
 };
