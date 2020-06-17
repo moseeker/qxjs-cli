@@ -149,6 +149,6 @@ export default class ReleaseSubCmd extends SubCommand {
   }
 
   getCommitInfo_(msg: string) {
-    return `'feat: ${msg || new Date().toString()}'`;
+    return `feat: ${msg || new Date().toString()}`;
   }
 }
