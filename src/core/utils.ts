@@ -25,23 +25,8 @@ export function resolveSourcePath(s: CopySourceGlob | string): CopySourceGlob {
     return s as CopySourceGlob;
   }
 
-  // extract the base from the glob.
-  const source = s as string;
-  const paths = source.split(Path.sep);
-  let index = -1;
-
-  for (let i = 0; i < paths.length; i++) {
-    const p = paths[i];
-    if (p !== '.' && p !== '..') {
-      index = i;
-      break;
-    }
-  }
-
-  const base = index === -1 ? '' : paths.slice(0, index + 1).join(Path.sep);
-
   return {
     glob: s as string,
-    base: base
+    base: ''
   };
 }

@@ -3,12 +3,19 @@ import test from 'ava';
 
 import { resolveSourcePath } from '../src/core/utils';
 
-test('works', t => {
+test('works for string', t => {
   const source = './../src/**/*.scss';
-  const dest = 'qxjs-dist';
 
-  const { glob, base } = resolveSourcePath(source);
-  t.is(base, './../src');
-  t.is(Path.join(dest, base), 'src');
-  t.truthy(glob);
+  const { base } = resolveSourcePath(source);
+  t.is(base, '');
+});
+
+test('works for glob source', t => {
+  const source = {
+    glob: './../src/**/*.scss',
+    base: 'abc'
+  };
+
+  const { base } = resolveSourcePath(source);
+  t.is(base, source.base);
 });
