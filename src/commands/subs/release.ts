@@ -104,7 +104,7 @@ export default class ReleaseSubCmd extends SubCommand {
       );
       this.logExecResult(execResult);
 
-      await this.standardVersion();
+      // await this.standardVersion();
     } else {
       this.cmd.logger.warn(
         this.name,
