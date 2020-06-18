@@ -1,25 +1,13 @@
 import isArray from 'lodash/isArray';
 import isString from 'lodash/isString';
-import isPlainObject from 'lodash/isPlainObject';
 import Path from 'path';
 import assert from 'assert';
 import cpx from 'cpx';
 import map from 'lodash/map';
 
+import { CopySourceGlob, resolveSourcePath } from '../../core/utils';
 import { SubCommand } from '../../core/SubCommand';
 import ValidationError from '../../core/ValidationError';
-import { findIndex } from 'lodash';
-
-export interface CopySourceGlob {
-  /**
-   * glob path.
-   */
-  glob: string;
-  /**
-   * base folder name to join with dest folder.
-   */
-  base?: string;
-}
 
 export type CopySource = string | string[] | (string | CopySourceGlob)[];
 
@@ -73,7 +61,7 @@ export default class CopySubCmd extends SubCommand {
 
     await Promise.all(
       map(sourcePaths, async s => {
-        const { glob: sourceDir, base } = this.resolveSourcePath(s);
+        const { glob: sourceDir, base } = resolveSourcePath(s);
 
         const destDir = this.cmd.resolvePath(Path.join(dest, base));
 
@@ -89,26 +77,6 @@ export default class CopySubCmd extends SubCommand {
     );
 
     return;
-  }
-
-  resolveSourcePath(s: CopySourceGlob | string): CopySourceGlob {
-    if (isPlainObject(s) && (s as CopySourceGlob).glob) {
-      return s as CopySourceGlob;
-    }
-
-    // extract the base from the glob.
-    const source = s as string;
-    const paths = source.split(Path.delimiter);
-    const index = findIndex(paths, p => {
-      return p != '.' && p !== '..';
-    });
-
-    const base = paths.slice(0, index + 1).join(Path.delimiter);
-
-    return {
-      glob: s as string,
-      base: base
-    };
   }
 
   async initialize(): Promise<void> {
