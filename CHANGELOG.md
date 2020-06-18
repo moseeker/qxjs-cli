@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 1.0.13 (2020-06-18)
+
+
+### Bug Fixes
+
+* **build:** remove doc generate ([79a22a9](https://github.com/moseeker/qxjs-cli/commit/79a22a9))
+
+
+
 ### 1.0.12 (2020-06-16)
 
 
