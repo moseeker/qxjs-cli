@@ -1,17 +1,33 @@
 import isArray from 'lodash/isArray';
 import isString from 'lodash/isString';
+import isPlainObject from 'lodash/isPlainObject';
+import Path from 'path';
 import assert from 'assert';
 import cpx from 'cpx';
 import map from 'lodash/map';
 
 import { SubCommand } from '../../core/SubCommand';
 import ValidationError from '../../core/ValidationError';
+import { findIndex } from 'lodash';
+
+export interface CopySourceGlob {
+  /**
+   * glob path.
+   */
+  glob: string;
+  /**
+   * base folder name to join with dest folder.
+   */
+  base?: string;
+}
+
+export type CopySource = string | string[] | (string | CopySourceGlob)[];
 
 export interface CopyConfig {
   /**
    * blob path for source files.
    */
-  source: string;
+  source: CopySource;
   /**
    * The dest path.
    */
@@ -55,23 +71,44 @@ export default class CopySubCmd extends SubCommand {
       sourcePaths = source;
     }
 
-    const destDir = this.cmd.resolvePath(dest);
-
     await Promise.all(
       map(sourcePaths, async s => {
-        const sourceDir = this.cmd.resolvePath(s);
+        const { glob: sourceDir, base } = this.resolveSourcePath(s);
+
+        const destDir = this.cmd.resolvePath(Path.join(dest, base));
+
         this.cmd.logger.info(
           this.name,
           'copying files: ',
           sourceDir,
           '=>',
-          dest
+          destDir
         );
         await this.copy(sourceDir, destDir, copyConfig);
       })
     );
 
     return;
+  }
+
+  resolveSourcePath(s: CopySourceGlob | string): CopySourceGlob {
+    if (isPlainObject(s) && (s as CopySourceGlob).glob) {
+      return s as CopySourceGlob;
+    }
+
+    // extract the base from the glob.
+    const source = s as string;
+    const paths = source.split(Path.delimiter);
+    const index = findIndex(paths, p => {
+      return p != '.' && p !== '..';
+    });
+
+    const base = paths.slice(0, index + 1).join(Path.delimiter);
+
+    return {
+      glob: s as string,
+      base: base
+    };
   }
 
   async initialize(): Promise<void> {

@@ -24,9 +24,10 @@ export async function isRepoClean(cwd: string): Promise<boolean> {
   let isClean = true;
 
   try {
-    const result = await execa.sync('git', ['status']);
+    // if it's clean, then there will be no output.
+    const result = await execa.sync('git', ['status', '--porcelain']);
     const out = result.stdout;
-    if (out.indexOf('working tree clean') === -1) {
+    if (!!out) {
       isClean = false;
     }
   } catch (err) {
