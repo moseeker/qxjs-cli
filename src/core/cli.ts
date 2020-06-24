@@ -36,7 +36,7 @@ export default function cli(argv: any[], cwd: string) {
     .wrap(cli.terminalWidth())
     .epilogue(
       dedent`
-      For more information, visit https://github.com/moseeker/qxjs-cli.
+      For more information, visit https://github.com/towry.
     `
     )
     .help();

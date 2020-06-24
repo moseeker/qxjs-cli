@@ -1,13 +1,13 @@
-# @moseeker/cli
+# @dqjs/cli
 
-[![npm version](https://badge.fury.io/js/%40moseeker%2Fcli.svg)](https://badge.fury.io/js/%40moseeker%2Fcli)
+[![npm version](https://badge.fury.io/js/%dqjs%2Fcli.svg)](https://badge.fury.io/js/%dqjs%2Fcli)
 
-MoSeeker Frontend tool.
+DQJS Frontend tool.
 
 ## Install
 
 ```
-npm install -g @moseeker/cli
+npm install -g @dqjs/cli
 ```
 
 # Commands
