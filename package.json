@@ -1,6 +1,6 @@
 {
   "name": "@dqjs/cli",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "DQJS frontend tool.",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
