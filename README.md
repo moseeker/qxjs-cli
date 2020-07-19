@@ -1,6 +1,6 @@
 # @dqjs/cli
 
-[![npm version](https://badge.fury.io/js/%dqjs%2Fcli.svg)](https://badge.fury.io/js/%dqjs%2Fcli)
+[![npm version](https://badge.fury.io/js/%40dqjs%2Fcli.svg)](https://badge.fury.io/js/%40dqjs%2Fcli)
 
 DQJS Frontend tool.
 
