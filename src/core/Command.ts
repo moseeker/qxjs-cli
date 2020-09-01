@@ -128,7 +128,7 @@ export default abstract class Command {
   }
 
   async runCommand(): Promise<any> {
-    const success = this.initialize();
+    const success = await this.initialize();
     if (success !== false) {
       return await this.execute();
     }
@@ -136,7 +136,7 @@ export default abstract class Command {
     return;
   }
 
-  abstract initialize(): boolean | void;
+  abstract async initialize(): Promise<boolean | void>;
   abstract async execute(): Promise<any>;
 
   /**

@@ -30,12 +30,12 @@ export class DeployCommand extends Command {
     ]) as DeployCommandConfig;
   }
 
-  initialize() {
+  async initialize() {
     this.copy = new CopySubCmd(this);
     this.release = new ReleaseSubCmd(this);
 
-    this.copy.initialize();
-    this.release.initialize({ cwd: this.config.dest });
+    await this.copy.initialize();
+    await this.release.initialize({ cwd: this.config.dest });
   }
 
   async validateConfig() {

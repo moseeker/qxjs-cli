@@ -8,7 +8,6 @@
   "repository": "https://github.com/towry/qxjs-cli",
   "license": "MIT",
   "keywords": [],
-  "private": false,
   "bin": {
     "qx": "./bin/qx.js"
   },
@@ -56,11 +55,14 @@
     "node": ">=8.9"
   },
   "dependencies": {
+    "@yarnpkg/core": "^2.2.2",
+    "@yarnpkg/fslib": "^2.2.1",
     "cosmiconfig": "^6.0.0",
     "cpx": "^1.5.0",
     "cz-conventional-changelog": "^2.1.0",
     "dedent": "^0.7.0",
     "execa": "^4.0.2",
+    "fs-extra": "^7.0.1",
     "global": "^4.4.0",
     "is-ci": "^2.0.0",
     "lodash": "^4.17.15",
