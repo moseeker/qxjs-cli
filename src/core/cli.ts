@@ -16,6 +16,11 @@ export default function cli(argv: any[], cwd: string) {
       describe: 'Verbose mode, show more logs',
       alias: 'verbose'
     })
+    .option('dry', {
+      type: 'boolean',
+      describe: 'Dry run mode',
+      alias: 'dry-run'
+    })
     .recommendCommands()
     .strict()
     .fail((msg: string, err: Error & { code?: number }) => {
