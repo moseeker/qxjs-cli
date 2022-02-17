@@ -38,7 +38,7 @@ export default class RemovePkgDevdepSubCmd extends SubCommand {
 
     // remove dev dependencies Map.
     // @see https://github.com/yarnpkg/berry/blob/b2c82b9aa7f5d19f3bdb3391d1af4c8dd61f656f/packages/yarnpkg-core/sources/Manifest.ts#L69
-    this.manifest.devDependencies = undefined;
+    this.manifest.devDependencies = new Map();
     if (!this.cmd.options.dry) {
       await this.persistManifest();
     }
