@@ -1,6 +1,9 @@
 {
   "name": "private",
   "private": true,
+  "scripts": {
+    "build": "echo \"build ok\""
+  },
   "devDependencies": {
     "@yarnpkg/core": "2.2.2"
   }

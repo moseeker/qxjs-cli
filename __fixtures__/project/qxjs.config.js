@@ -3,6 +3,6 @@ module.exports = {
   deploy: {
     source: ['./source/**/*.js', './source/**/*.scss'],
     dest: './dest',
-    build: './build'
+    build: 'build'
   }
 };
