@@ -63,7 +63,7 @@ export default class RemovePkgDevdepSubCmd extends SubCommand {
   }
 
   async validate() {
-    if (typeof this.cwd !== 'string') {
+    if (typeof this.config.cwd !== 'string') {
       throw new ValidationError(this.name, `{config}.cwd must be of string`);
     }
   }
