@@ -1,7 +1,7 @@
-import Path from 'path';
 import log, { Logger } from 'npmlog';
-import { CommandOption, CommandArgv } from './utils';
+import Path from 'path';
 import Project from './Project';
+import { CommandArgv, CommandOption } from './utils';
 
 const cliPrefix = 'qxjs';
 
@@ -37,6 +37,14 @@ export default abstract class Command {
       chain = chain.then(() => {
         this.logger.info(this.name, 'version', this.options.qxjsCliVersion);
         this.logger.verbose(this.name, 'options', this.options);
+      });
+      chain = chain.then(() => {
+        // check project is empty
+        if (this.project.empty) {
+          throw new Error(
+            'config file not found in current project, pass --verbose to see the full details'
+          );
+        }
       });
       chain = chain.then(() => this.runCommand());
 

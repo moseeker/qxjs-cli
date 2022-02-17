@@ -1,12 +1,11 @@
-import isArray from 'lodash/isArray';
-import isString from 'lodash/isString';
-import Path from 'path';
 import assert from 'assert';
 import cpx from 'cpx';
+import isArray from 'lodash/isArray';
+import isString from 'lodash/isString';
 import map from 'lodash/map';
-
-import { CopySourceGlob, resolveSourcePath } from '../../core/utils';
+import Path from 'path';
 import { SubCommand } from '../../core/SubCommand';
+import { CopySourceGlob, resolveSourcePath } from '../../core/utils';
 import ValidationError from '../../core/ValidationError';
 
 export type CopySource = string | string[] | (string | CopySourceGlob)[];
@@ -105,7 +104,7 @@ export default class CopySubCmd extends SubCommand {
           return reject(err);
         }
 
-        resolve();
+        resolve(undefined);
       });
     });
   }

@@ -1,11 +1,12 @@
-import runAll from 'npm-run-all';
 import fs from 'fs';
+import runAll from 'npm-run-all';
 import standardVersion from 'standard-version';
 import Command from '../../core/Command';
+import { getLatestCommit, isRepoClean } from '../../core/gitutil';
+import ValidationError from '../../core/ValidationError';
 import CopySubCmd, { CopyConfig } from '../subs/copy';
 import ReleaseSubCmd from '../subs/release';
-import ValidationError from '../../core/ValidationError';
-import { getLatestCommit, isRepoClean } from '../../core/gitutil';
+import RemovePkgDevdepSubCmd from '../subs/remove-pkg-devdep';
 
 export interface DeployCommandConfig extends CopyConfig {
   /**
@@ -22,6 +23,7 @@ export class DeployCommand extends Command {
   configSectionName = 'deploy';
   copy: CopySubCmd;
   release: ReleaseSubCmd;
+  removeDevdepCmd: RemovePkgDevdepSubCmd;
 
   get config() {
     return this.project?.get([
@@ -33,9 +35,11 @@ export class DeployCommand extends Command {
   async initialize() {
     this.copy = new CopySubCmd(this);
     this.release = new ReleaseSubCmd(this);
+    this.removeDevdepCmd = new RemovePkgDevdepSubCmd(this);
 
     await this.copy.initialize();
     await this.release.initialize({ cwd: this.config.dest });
+    await this.removeDevdepCmd.initialize({ cwd: this.config.dest });
   }
 
   async validateConfig() {
@@ -95,6 +99,8 @@ export class DeployCommand extends Command {
     await this.release.cleanup(this.config.dest);
     // copy files.
     await this.copy.execute();
+    // remove package dev dependences.
+    await this.removeDevdepCmd.execute();
     // release.
     const releasedCommit = await this.release.execute({
       sourceCommit: latestCommit

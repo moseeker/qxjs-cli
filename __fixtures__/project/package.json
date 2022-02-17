@@ -1,0 +1,7 @@
+{
+  "name": "private",
+  "private": true,
+  "devDependencies": {
+    "@yarnpkg/core": "2.2.2"
+  }
+}

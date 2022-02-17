@@ -22,6 +22,8 @@ run `qx --help` for full list of commands.
 # Contribute
 
 ```
+npm install
+// do not use yarn install, otherwise weird errors happen.
 npm run watch
 ./bin/qx.js -h
 ```

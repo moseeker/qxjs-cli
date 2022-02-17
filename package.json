@@ -14,8 +14,8 @@
   "scripts": {
     "describe": "npm-scripts-info",
     "build": "run-s clean && run-p build:*",
-    "build:main": "tsc -p tsconfig.json",
-    "build:module": "tsc -p tsconfig.module.json",
+    "build:main": "./node_modules/.bin/tsc -p tsconfig.json",
+    "build:module": "./node_modules/.bin/tsc -p tsconfig.module.json",
     "fix": "run-s fix:*",
     "fix:prettier": "prettier \"src/**/*.ts\" --write",
     "fix:tslint": "tslint --fix --project .",
@@ -55,8 +55,8 @@
     "node": ">=8.9"
   },
   "dependencies": {
-    "@yarnpkg/core": "^2.2.2",
-    "@yarnpkg/fslib": "^2.2.1",
+    "@yarnpkg/core": "2.2.2",
+    "@yarnpkg/fslib": "2.2.1",
     "cosmiconfig": "^6.0.0",
     "cpx": "^1.5.0",
     "cz-conventional-changelog": "^2.1.0",
