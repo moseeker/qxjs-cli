@@ -38,14 +38,6 @@ export default abstract class Command {
         this.logger.info(this.name, 'version', this.options.qxjsCliVersion);
         this.logger.verbose(this.name, 'options', this.options);
       });
-      chain = chain.then(() => {
-        // check project is empty
-        if (this.project.empty) {
-          throw new Error(
-            'config file not found in current project, pass --verbose to see the full details'
-          );
-        }
-      });
       chain = chain.then(() => this.runCommand());
 
       chain.then(
