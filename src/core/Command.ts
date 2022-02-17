@@ -31,7 +31,7 @@ export default abstract class Command {
           : process.cwd();
         this.project = new Project(cwd);
       });
-      chain = chain.then(() => this.confiigureEnvironment());
+      chain = chain.then(() => this.configureEnvironment());
       chain = chain.then(() => this.configureOptions());
       chain = chain.then(() => this.configureLogging());
       chain = chain.then(() => {
@@ -107,7 +107,7 @@ export default abstract class Command {
     }
   }
 
-  async confiigureEnvironment() {
+  async configureEnvironment() {
     const { default: ci } = await import('is-ci');
     let loglevel;
     let progress = true;
