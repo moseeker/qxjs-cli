@@ -100,7 +100,9 @@ export class DeployCommand extends Command {
     // copy files.
     await this.copy.execute();
     // remove package dev dependences.
-    await this.removeDevdepCmd.execute();
+    await this.removeDevdepCmd.execute({
+      sourceCommit: latestCommit
+    });
     // release.
     const releasedCommit = await this.release.execute({
       sourceCommit: latestCommit

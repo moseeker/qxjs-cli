@@ -17,12 +17,16 @@ export interface RemovePkgDevdepConfig {
   cwd?: string;
 }
 
+interface ExecuateContext {
+  sourceCommit?: string;
+}
+
 export default class RemovePkgDevdepSubCmd extends SubCommand {
   manifest: Manifest = null;
   cwd: PortablePath;
   config: RemovePkgDevdepConfig = {};
 
-  async execute(): Promise<any> {
+  async execute(ctx: ExecuateContext): Promise<any> {
     await this.validate();
 
     const oldCwd = this.enter(this.config.cwd);
@@ -35,6 +39,9 @@ export default class RemovePkgDevdepSubCmd extends SubCommand {
       );
       return;
     }
+
+    // add sourceCommit field.
+    this.manifest.raw.sourceCommit = ctx.sourceCommit || '';
 
     // remove dev dependencies Map.
     // @see https://github.com/yarnpkg/berry/blob/b2c82b9aa7f5d19f3bdb3391d1af4c8dd61f656f/packages/yarnpkg-core/sources/Manifest.ts#L69
