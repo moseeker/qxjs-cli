@@ -1,4 +1,4 @@
-# @dqjs/cli
+# @dqjs/cli [Deprecated]
 
 [![npm version](https://badge.fury.io/js/%40dqjs%2Fcli.svg)](https://badge.fury.io/js/%40dqjs%2Fcli)
 
