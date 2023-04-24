@@ -1,5 +1,5 @@
 {
-  "name": "@dqjs/cli",
+  "name": "@dqjs/cli-tmp",
   "version": "1.1.7",
   "description": "DQJS frontend tool.",
   "main": "build/main/index.js",
@@ -9,7 +9,7 @@
   "license": "MIT",
   "keywords": [],
   "bin": {
-    "qx": "./bin/qx.js"
+    "qx-tmp": "./bin/qx.js"
   },
   "scripts": {
     "describe": "npm-scripts-info",
