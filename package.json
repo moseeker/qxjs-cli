@@ -1,6 +1,6 @@
 {
   "name": "@dqjs/cli-tmp",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "DQJS frontend tool. deprecated",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
